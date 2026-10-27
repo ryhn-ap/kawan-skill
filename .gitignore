@@ -1,0 +1,51 @@
+# 1. Environment Variables & Credentials
+# Mencegah bocornya kunci API atau kredensial rahasia
+.env
+.env.*
+!.env.example
+*.local
+js/supabase-client.js
+
+# 2. Editor & IDE Settings
+# Konfigurasi workspace lokal VS Codium / VS Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+README-FOR-DEV.md
+
+# 3. AI Assistant Context & History
+# Abaikan cache atau file index lokal Antigravity jika dibuat
+.antigravity/
+.cursor/
+
+# 4. OS Generated Files
+# File sementara sistem operasi (macOS / Windows / Linux)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+*~
+
+# 5. Logs & Temporary Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 6. Build / Dependencies (jika nanti menggunakan toolchain CLI/Tailwind)
+node_modules/
+dist/
+.cache/
+.netlify/

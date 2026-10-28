@@ -98,6 +98,15 @@ async function muatDataDariSupabase() {
 			dataSaya.status = typeof profil.status === 'number' ? profil.status : 0;
 			dataSaya.bukaTukarSkill = profil.terbuka_tukar_skill !== false;
 			dataSaya.foto = profil.foto_url || null;
+
+			// Muat portofolio dari Supabase jika ada
+			let ports = profil.portofolio_urls;
+			if (typeof ports === 'string') {
+				try { ports = JSON.parse(ports); } catch (_) { ports = []; }
+			}
+			if (Array.isArray(ports)) {
+				dataSaya.portofolio = [ports[0] || null, ports[1] || null, ports[2] || null];
+			}
 		}
 
 		// 2. Ambil data skill
@@ -242,16 +251,72 @@ $('#input-gambar').addEventListener('change', async (e) => {
 	}
 
 	// 2. Jika tujuan portofolio galeri (slot 0, 1, 2)
-	const pembaca = new FileReader();
-	pembaca.onload = () => {
-		dataSaya.portofolio[tujuanGambar] = pembaca.result;
-		simpan();
-		tampilkanFotoDanGaleri();
-	};
-	pembaca.readAsDataURL(berkas);
+	const slot = Number(tujuanGambar);
+	if (isNaN(slot)) return;
+
+	if (window.supabase && idPenggunaAktif) {
+		const btnSlot = $(`[data-slot="${slot}"][data-aksi="tambah"]`);
+		const teksAsli = btnSlot ? btnSlot.textContent : '+ Tambah gambar';
+		if (btnSlot) {
+			btnSlot.disabled = true;
+			btnSlot.textContent = 'Mengunggah...';
+		}
+
+		try {
+			const ekstensi = berkas.name.split('.').pop() || 'jpg';
+			const namaFile = `portfolio-${idPenggunaAktif}-${Date.now()}.${ekstensi}`;
+
+			// a. Unggah ke bucket 'portofolios'
+			const { error: uploadError } = await window.supabase.storage
+				.from('portofolios')
+				.upload(namaFile, berkas, {
+					cacheControl: '3600',
+					upsert: true
+				});
+
+			if (uploadError) throw uploadError;
+
+			// b. Ambil URL publik
+			const { data: publicUrlData } = window.supabase.storage
+				.from('portofolios')
+				.getPublicUrl(namaFile);
+
+			const urlPortofolio = publicUrlData.publicUrl;
+			dataSaya.portofolio[slot] = urlPortofolio;
+
+			// c. Simpan array portofolio_urls ke tabel profiles
+			const portofolioValid = dataSaya.portofolio.filter(Boolean);
+			const { error: updateError } = await window.supabase
+				.from('profiles')
+				.update({ portofolio_urls: portofolioValid })
+				.eq('id', idPenggunaAktif);
+
+			if (updateError) throw updateError;
+
+			simpan();
+			tampilkanFotoDanGaleri();
+			tampilkanToast('Foto portofolio berhasil diunggah!');
+		} catch (err) {
+			console.error('Gagal mengunggah portofolio ke Supabase Storage:', err);
+			tampilkanToast('Gagal unggah portofolio: ' + (err.message || 'Periksa bucket portofolios.'));
+		} finally {
+			if (btnSlot) {
+				btnSlot.disabled = false;
+				btnSlot.textContent = teksAsli;
+			}
+		}
+	} else {
+		const pembaca = new FileReader();
+		pembaca.onload = () => {
+			dataSaya.portofolio[slot] = pembaca.result;
+			simpan();
+			tampilkanFotoDanGaleri();
+		};
+		pembaca.readAsDataURL(berkas);
+	}
 });
 
-$('#galeri').addEventListener('click', (e) => {
+$('#galeri').addEventListener('click', async (e) => {
 	const tombol = e.target.closest('[data-aksi]');
 	if (!tombol) return;
 	const slot = Number(tombol.dataset.slot);
@@ -260,6 +325,18 @@ $('#galeri').addEventListener('click', (e) => {
 		dataSaya.portofolio[slot] = null;
 		simpan();
 		tampilkanFotoDanGaleri();
+
+		if (window.supabase && idPenggunaAktif) {
+			try {
+				const portofolioValid = dataSaya.portofolio.filter(Boolean);
+				await window.supabase
+					.from('profiles')
+					.update({ portofolio_urls: portofolioValid })
+					.eq('id', idPenggunaAktif);
+			} catch (err) {
+				console.warn('Gagal update portofolio setelah hapus:', err);
+			}
+		}
 	}
 });
 
@@ -326,7 +403,7 @@ $('#btn-buat-link').addEventListener('click', async () => {
 					profile_id: idPenggunaAktif,
 					nama_pengulas: 'Tamu (' + jenis + ')',
 					rating: 5,
-					komentar: 'Menunggu ulasan...',
+					komentar: null,
 					token_ulasan: tokenAcak,
 					is_used: false,
 					tipe_pengulas: jenis === 'tukar-skill' ? 'Pengguna Terdaftar' : 'Pengguna Eksternal'
@@ -401,7 +478,8 @@ $('#btn-simpan').addEventListener('click', async () => {
 					whatsapp: dataSaya.whatsapp || '',
 					status: dataSaya.status,
 					terbuka_tukar_skill: dataSaya.bukaTukarSkill,
-					foto_url: (typeof dataSaya.foto === 'string' && dataSaya.foto.startsWith('http')) ? dataSaya.foto : null
+					foto_url: (typeof dataSaya.foto === 'string' && dataSaya.foto.startsWith('http')) ? dataSaya.foto : null,
+					portofolio_urls: (dataSaya.portofolio || []).filter(Boolean)
 				});
 
 			if (errProfil) throw errProfil;

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   status INT2 DEFAULT 0, -- 0: Sedang Free, 1: Sedang Menerima Pekerjaan, 2: Sedang Bertukar Skill, 3: Tidak Aktif, 4: Liburan
   terbuka_tukar_skill BOOLEAN DEFAULT true,
   foto_url TEXT,
+  portofolio_urls JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

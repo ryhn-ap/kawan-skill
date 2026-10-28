@@ -46,7 +46,33 @@ function siapkanFormWhatsapp(penyedia) {
 		$('#mt-pratinjau').textContent = susunPesanMintaTolong();
 		$('#mt-kirim').disabled = !(nilai('mt-nama') && nilai('mt-detail'));   // nama dan detail wajib diisi
 	}
-	$('#btn-minta-tolong').addEventListener('click', () => {
+	$('#btn-minta-tolong').addEventListener('click', async () => {
+		// Auto-fill nama pemohon jika user sedang login
+		const inputNama = $('#mt-nama');
+		if (inputNama && (!inputNama.value || inputNama.value.trim() === '')) {
+			if (dataSaya && dataSaya.nama) {
+				inputNama.value = dataSaya.nama;
+			} else if (window.supabase) {
+				try {
+					const { data: { user } } = await window.supabase.auth.getUser();
+					if (user) {
+						let namaUser = user.user_metadata?.name || user.user_metadata?.full_name || '';
+						if (!namaUser) {
+							const { data: prof } = await window.supabase
+								.from('profiles')
+								.select('name')
+								.eq('id', user.id)
+								.maybeSingle();
+							if (prof && prof.name) namaUser = prof.name;
+						}
+						if (namaUser) inputNama.value = namaUser;
+					}
+				} catch (err) {
+					console.warn('Gagal ambil data user aktif untuk form minta tolong:', err);
+				}
+			}
+		}
+
 		dialogMinta.showModal();
 		perbaruiMintaTolong();
 	});

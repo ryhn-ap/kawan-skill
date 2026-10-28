@@ -44,6 +44,7 @@ function transformProfil(row) {
 		status: typeof row.status === 'number' ? row.status : 0,
 		bukaTukarSkill: row.terbuka_tukar_skill !== false,
 		fotoUrl: row.foto_url || null,
+		portofolioUrls: Array.isArray(row.portofolio_urls) ? row.portofolio_urls : (typeof row.portofolio_urls === 'string' ? JSON.parse(row.portofolio_urls || '[]') : []),
 		skill: skillNames.length > 0 ? skillNames : ['Umum'],
 		skillsRelasi: skillsList,
 		reviewsRelasi: reviewsList,

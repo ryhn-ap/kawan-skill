@@ -69,6 +69,11 @@ async function inisialisasiProfilPublik() {
 			return;
 		}
 
+		// Filter reviews agar hanya menampilkan ulasan yang valid / sudah diisi komentar
+		if (Array.isArray(data.reviews)) {
+			data.reviews = data.reviews.filter((r) => r.komentar && r.komentar.trim() !== '' && r.status !== 'pending');
+		}
+
 		const penyedia = transformProfil(data);
 		renderProfil(penyedia);
 	} catch (err) {
@@ -82,6 +87,8 @@ function tampilkanLoadingProfil() {
 	$('#p-kampus').textContent = 'Mohon tunggu';
 	$('#p-bio').textContent = 'Sedang memuat data dari database...';
 	$('#p-daftar-skill').innerHTML = '<p class="mu" style="padding: 10px 0;">Memuat keahlian...</p>';
+	const wadahPorto = $('#p-daftar-portofolio');
+	if (wadahPorto) wadahPorto.innerHTML = '<p class="mu" style="padding: 10px 0; grid-column: 1 / -1;">Memuat portofolio...</p>';
 	$('#p-daftar-ulasan').innerHTML = '<p class="mu" style="padding: 10px 0;">Memuat ulasan...</p>';
 }
 
@@ -162,6 +169,25 @@ function renderProfil(penyedia) {
 			isiTeks(baris, 'tarif', rupiah(skill.tarif));
 			wadahSkill.appendChild(baris);
 		});
+	}
+
+	/* ---------- Portofolio ---------- */
+	const wadahPorto = $('#p-daftar-portofolio');
+	if (wadahPorto) {
+		wadahPorto.innerHTML = '';
+		const daftarPorto = (penyedia.portofolioUrls || []).filter(Boolean);
+
+		if (daftarPorto.length === 0) {
+			wadahPorto.innerHTML = '<p class="mu" style="padding: 10px 0; grid-column: 1 / -1;">Kawan ini belum mengunggah portofolio.</p>';
+		} else {
+			daftarPorto.forEach((urlGambar, index) => {
+				const item = document.createElement('div');
+				item.style.overflow = 'hidden';
+				item.style.padding = '0';
+				item.innerHTML = `<img src="${urlGambar}" alt="Portofolio ${index + 1}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">`;
+				wadahPorto.appendChild(item);
+			});
+		}
 	}
 
 	/* ---------- Daftar Ulasan (Murni dari relasi reviews) ---------- */

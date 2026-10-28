@@ -45,7 +45,7 @@ async function inisialisasiProfilPublik() {
 	}
 
 	if (window.isSupabaseConfigured && !window.isSupabaseConfigured()) {
-		tampilkanErrorProfil('Kredensial Supabase belum diatur di <code>js/supabase-client.js</code>.');
+		tampilkanErrorProfil('Kredensial Supabase belum diatur di <code>js/config/supabase-client.js</code>.');
 		return;
 	}
 

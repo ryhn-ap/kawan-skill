@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  
-  [![Netlify Status](https://api.netlify.com/api/v1/badges/fb7a2d3d-0772-4c84-a8a1-20b20ad8326f/deploy-status)](https://app.netlify.com/projects/kawanskill/deploys)
+
+  [![GitHub Pages](https://github.com/ryhn-ap/kawan-skill/actions/workflows/deploy.yml/badge.svg)](https://github.com/ryhn-ap/kawan-skill/actions/workflows/deploy.yml)
   <img src="https://img.shields.io/badge/Status-MVP%20Ready-2DB7AD?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Stack-Vanilla%20HTML%2FCSS%2FJS-FF8F2E?style=for-the-badge" alt="Stack" />
   <img src="https://img.shields.io/badge/Backend-Supabase-3ECF8E?style=for-the-badge&logo=supabase" alt="Supabase" />

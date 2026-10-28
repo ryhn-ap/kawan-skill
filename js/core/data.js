@@ -59,7 +59,7 @@ async function ambilSemuaPenyedia() {
 	if (!window.supabase || (window.isSupabaseConfigured && !window.isSupabaseConfigured())) {
 		return {
 			status: 'NOT_CONFIGURED',
-			pesan: 'Supabase belum dikonfigurasi. Silakan atur SUPABASE_URL dan SUPABASE_ANON_KEY di js/supabase-client.js',
+			pesan: 'Supabase belum dikonfigurasi. Silakan atur SUPABASE_URL dan SUPABASE_ANON_KEY di js/config/supabase-client.js',
 			data: []
 		};
 	}
@@ -108,7 +108,7 @@ async function ambilPenyediaById(id) {
 	if (!window.supabase || (window.isSupabaseConfigured && !window.isSupabaseConfigured())) {
 		return {
 			status: 'NOT_CONFIGURED',
-			pesan: 'Supabase belum dikonfigurasi di js/supabase-client.js',
+			pesan: 'Supabase belum dikonfigurasi di js/config/supabase-client.js',
 			data: null
 		};
 	}

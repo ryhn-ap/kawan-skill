@@ -115,7 +115,7 @@ function tampilkanDaftar() {
 		wadah.innerHTML = `
 			<div style="grid-column: 1 / -1; background: var(--s1); border: 1px dashed var(--org); padding: 32px; border-radius: 16px; text-align: center;">
 				<h3 style="color: var(--org); margin-bottom: 8px;">Kredensial Supabase Belum Diisi</h3>
-				<p class="mu">Silakan tempelkan <b>SUPABASE_URL</b> dan <b>SUPABASE_ANON_KEY</b> kamu di file <code>js/supabase-client.js</code>.</p>
+				<p class="mu">Silakan tempelkan <b>SUPABASE_URL</b> dan <b>SUPABASE_ANON_KEY</b> kamu di file <code>js/config/supabase-client.js</code>.</p>
 			</div>
 		`;
 		elJumlah.textContent = 'Konfigurasi diperlukan';

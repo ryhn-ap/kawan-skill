@@ -4,7 +4,7 @@
 .env.*
 !.env.example
 *.local
-js/supabase-client.js
+js/config/supabase-client.js
 
 # 2. Editor & IDE Settings
 # Konfigurasi workspace lokal VS Codium / VS Code
@@ -18,7 +18,7 @@ js/supabase-client.js
 *.njsproj
 *.sln
 *.sw?
-README-FOR-DEV.md
+docs/README-FOR-DEV.md
 
 # 3. AI Assistant Context & History
 # Abaikan cache atau file index lokal Antigravity jika dibuat

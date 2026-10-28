@@ -35,14 +35,14 @@ window.isSupabaseConfigured = isSupabaseConfigured;
 window.dispatchEvent(new CustomEvent('supabase:ready', { detail: { client, isConfigured: isSupabaseConfigured() } }));
 `;
 
-// Pastikan folder js/ ada sebelum menulis file
-const targetDir = path.join(__dirname, 'js');
+// Pastikan folder js/config/ ada sebelum menulis file
+const targetDir = path.join(__dirname, '..', 'js', 'config');
 if (!fs.existsSync(targetDir)) {
   fs.mkdirSync(targetDir, { recursive: true });
 }
 
-// Tuliskan ke js/supabase-client.js
+// Tuliskan ke js/config/supabase-client.js
 const targetFile = path.join(targetDir, 'supabase-client.js');
 fs.writeFileSync(targetFile, fileContent, 'utf8');
 
-console.log('✅ File js/supabase-client.js berhasil di-generate untuk deployment Netlify!');
+console.log('✅ File js/config/supabase-client.js berhasil di-generate untuk deployment!');

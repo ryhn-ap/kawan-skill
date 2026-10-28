@@ -1358,3 +1358,106 @@ dialog::backdrop {
 .kecil {
    font-size: .82rem
 }
+
+/* ===== MOBILE RESPONSIVE NAVBAR & HAMBURGER MENU ===== */
+.btn-hamburger {
+   display: none;
+   background: transparent;
+   border: 0;
+   padding: 8px;
+   color: #e2e8f0;
+   cursor: pointer;
+   border-radius: 8px;
+   margin-left: auto;
+   line-height: 0;
+   transition: background 0.2s, color 0.2s;
+}
+
+.btn-hamburger:hover {
+   background: var(--s2);
+   color: var(--teal);
+}
+
+.menu-mobile {
+   position: absolute;
+   top: 100%;
+   left: 0;
+   width: 100%;
+   background: rgba(11, 21, 23, 0.96);
+   backdrop-filter: blur(16px);
+   -webkit-backdrop-filter: blur(16px);
+   border-bottom: 1px solid var(--line);
+   padding: 20px;
+   display: flex;
+   flex-direction: column;
+   gap: 16px;
+   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+   z-index: 50;
+   animation: slideDownNav 0.2s ease-out;
+}
+
+.menu-mobile[hidden] {
+   display: none !important;
+}
+
+@keyframes slideDownNav {
+   from {
+      opacity: 0;
+      transform: translateY(-8px);
+   }
+   to {
+      opacity: 1;
+      transform: translateY(0);
+   }
+}
+
+.mobile-nav-links {
+   display: flex;
+   flex-direction: column;
+   gap: 12px;
+}
+
+.mobile-nav-links a {
+   font-size: 1rem;
+   font-weight: 600;
+   color: var(--tx);
+   padding: 10px 14px;
+   border-radius: 10px;
+   transition: background 0.15s, color 0.15s;
+   text-decoration: none;
+}
+
+.mobile-nav-links a:hover {
+   background: var(--s1);
+   color: var(--teal);
+}
+
+.mobile-nav-auth {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   padding-top: 14px;
+   border-top: 1px solid var(--line);
+}
+
+.mobile-nav-auth .btn {
+   width: 100%;
+   text-align: center;
+   justify-content: center;
+   padding: 12px;
+   font-size: 0.95rem;
+}
+
+@media(max-width: 768px) {
+   header .links {
+      display: none !important;
+   }
+   header .auth {
+      display: none !important;
+   }
+   .btn-hamburger {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+   }
+}

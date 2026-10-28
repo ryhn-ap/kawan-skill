@@ -75,7 +75,22 @@ async function inisialisasiProfilPublik() {
 		}
 
 		const penyedia = transformProfil(data);
-		renderProfil(penyedia);
+
+		// Cek apakah user yang login sedang melihat profil miliknya sendiri
+		let isProfilSendiri = false;
+		try {
+			const { data: authData } = await window.supabase.auth.getUser();
+			if (authData && authData.user && String(authData.user.id) === String(penyedia.id)) {
+				isProfilSendiri = true;
+			}
+		} catch (e) {
+			console.warn('Gagal cek auth user di profil:', e);
+		}
+		if (!isProfilSendiri && typeof dataSaya !== 'undefined' && dataSaya && dataSaya.id && String(dataSaya.id) === String(penyedia.id)) {
+			isProfilSendiri = true;
+		}
+
+		renderProfil(penyedia, isProfilSendiri);
 	} catch (err) {
 		console.error('Koneksi Supabase error:', err);
 		tampilkanErrorProfil('Terjadi kesalahan saat menghubungi server.');
@@ -110,10 +125,16 @@ function tampilkanErrorProfil(pesan) {
 	}
 }
 
-function renderProfil(penyedia) {
+function renderProfil(penyedia, isProfilSendiri = false) {
 	aturTombolKembali();
 	const statusPenyedia = DAFTAR_STATUS[penyedia.status] || DAFTAR_STATUS[0];
 	document.title = penyedia.nama + ' | Kawan Skill';
+
+	/* Banner pratinjau profil sendiri */
+	const bannerSendiri = $('#banner-profil-sendiri');
+	if (bannerSendiri) {
+		bannerSendiri.style.display = isProfilSendiri ? 'flex' : 'none';
+	}
 
 	/* ---------- Kartu kiri ---------- */
 	const avatar = $('#p-avatar');
@@ -138,18 +159,43 @@ function renderProfil(penyedia) {
 	$('#p-status').textContent = statusPenyedia.nama;
 	$('#p-badge-tukar').hidden = !penyedia.bukaTukarSkill;
 
-	/* Tombol aksi: aktif atau tidak tergantung status penyedia (aturan di DAFTAR_STATUS) */
+	/* Tombol aksi */
 	const tombolMinta = $('#btn-minta-tolong');
-	tombolMinta.disabled = !statusPenyedia.bisaMintaTolong;
-	tombolMinta.textContent = statusPenyedia.bisaMintaTolong ? 'Minta Tolong' : 'Minta Tolong (belum tersedia)';
-
 	const tombolTukar = $('#btn-tukar-skill');
-	if (penyedia.bukaTukarSkill) {
-		tombolTukar.disabled = !statusPenyedia.bisaTukarSkill;
-		tombolTukar.textContent = statusPenyedia.bisaTukarSkill ? 'Tukar Skill' : 'Tukar Skill (belum tersedia)';
+	const tombolEditSendiri = $('#btn-edit-profil-sendiri');
+	const teksWaInfo = $('#p-wa-info');
+	const pTukarTutup = $('#p-tukar-tutup');
+
+	if (isProfilSendiri) {
+		// Sembunyikan tombol transaksi Minta Tolong & Tukar Skill
+		if (tombolMinta) tombolMinta.style.display = 'none';
+		if (tombolTukar) tombolTukar.style.display = 'none';
+		if (pTukarTutup) pTukarTutup.hidden = true;
+		if (teksWaInfo) teksWaInfo.style.display = 'none';
+
+		// Tampilkan tombol "Edit Profil Saya"
+		if (tombolEditSendiri) tombolEditSendiri.style.display = 'block';
 	} else {
-		tombolTukar.hidden = true;                       // penyedia ini tidak membuka tukar skill sama sekali
-		$('#p-tukar-tutup').hidden = false;
+		if (tombolEditSendiri) tombolEditSendiri.style.display = 'none';
+		if (teksWaInfo) teksWaInfo.style.display = 'block';
+
+		if (tombolMinta) {
+			tombolMinta.style.display = 'block';
+			tombolMinta.disabled = !statusPenyedia.bisaMintaTolong;
+			tombolMinta.textContent = statusPenyedia.bisaMintaTolong ? 'Minta Tolong' : 'Minta Tolong (belum tersedia)';
+		}
+
+		if (tombolTukar) {
+			if (penyedia.bukaTukarSkill) {
+				tombolTukar.style.display = 'block';
+				tombolTukar.disabled = !statusPenyedia.bisaTukarSkill;
+				tombolTukar.textContent = statusPenyedia.bisaTukarSkill ? 'Tukar Skill' : 'Tukar Skill (belum tersedia)';
+				if (pTukarTutup) pTukarTutup.hidden = true;
+			} else {
+				tombolTukar.style.display = 'none';
+				if (pTukarTutup) pTukarTutup.hidden = false;
+			}
+		}
 	}
 
 	/* ---------- Kolom kanan: Bio ---------- */

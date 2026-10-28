@@ -18,6 +18,25 @@ if (DAFTAR_KATEGORI.includes(kategoriDariAlamat)) filter.kategori = kategoriDari
 let listPenyediaAktif = [];
 let statusSupabase = 'LOADING'; // 'LOADING' | 'OK' | 'NOT_CONFIGURED' | 'ERROR'
 let pesanErrorSupabase = '';
+let currentUserId = null;
+
+/* Ambil ID pengguna yang sedang login (jika ada) */
+async function ambilUserLogin() {
+	if (window.supabase) {
+		try {
+			const { data: { user } } = await window.supabase.auth.getUser();
+			if (user) {
+				currentUserId = user.id;
+				return;
+			}
+		} catch (err) {
+			console.warn('Gagal membaca auth user di katalog:', err);
+		}
+	}
+	if (typeof dataSaya !== 'undefined' && dataSaya && dataSaya.id) {
+		currentUserId = dataSaya.id;
+	}
+}
 
 /* Apakah penyedia ini lolos semua filter? */
 function cocokDenganFilter(p) {
@@ -74,6 +93,13 @@ function buatKartu(p) {
 	isiTeks(kartu, 'rating', p.rating);
 	isiTeks(kartu, 'jumlah-ulasan', p.jumlahUlasan);
 	$('[data-isi="badge-tukar"]', kartu).hidden = !p.bukaTukarSkill;
+
+	// Badge penanda jika kartu adalah profil milik pengguna yang sedang login
+	const badgeSaya = $('[data-isi="badge-saya"]', kartu);
+	if (badgeSaya) {
+		badgeSaya.hidden = !(currentUserId && String(currentUserId) === String(p.id));
+	}
+
 	$('[data-isi="link-profil"]', kartu).href = 'profil.html?id=' + encodeURIComponent(p.id) + '&from=katalog';
 	return kartu;
 }
@@ -161,6 +187,8 @@ async function inisialisasiKatalog() {
 	`;
 	$('#hasil-kosong').hidden = true;
 	tandaiKategoriAktif();
+
+	await ambilUserLogin();
 
 	const res = await ambilSemuaPenyedia();
 	statusSupabase = res.status;

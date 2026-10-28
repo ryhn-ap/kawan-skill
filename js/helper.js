@@ -20,6 +20,18 @@ const inisial = (nama) =>
 /* Format tampilan kampus: "Jurusan, Universitas" atau "Universitas" jika jurusan kosong */
 const formatKampus = (p) => `${p && p.jurusan ? p.jurusan + ', ' : ''}${(p && p.kampus) || ''}`;
 
+/* Standarisasi nomor telepon ke format WhatsApp internasional (62xxxx) */
+function normalisasiNomorWa(nomor) {
+	if (!nomor) return '';
+	let clean = String(nomor).replace(/[^0-9]/g, '');
+	if (clean.startsWith('0')) {
+		clean = '62' + clean.slice(1);
+	} else if (clean.startsWith('8')) {
+		clean = '62' + clean;
+	}
+	return clean;
+}
+
 /* Mengisi teks elemen bertanda data-isi="nama" di dalam sebuah template yang sudah disalin.
    Contoh: isiTeks(kartu, 'nama', 'Aulia Rahma') mengisi <h3 data-isi="nama"></h3> */
 function isiTeks(akar, nama, teks) {

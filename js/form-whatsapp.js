@@ -8,10 +8,15 @@ const dialogMasukDulu = $('#dlg-masuk-dulu');
 
 const nilai = (id) => $('#' + id).value.trim();    // isi kolom form berdasarkan id
 
-/* Membuka WhatsApp dengan pesan yang sudah terisi.
-   PRODUKSI: ganti dengan 'https://wa.me/' + nomorPenyedia + '?text=' ... (nomor dari database, tidak ditampilkan di profil). */
-function bukaWhatsapp(pesan) {
-	window.open('https://wa.me/?text=' + encodeURIComponent(pesan), '_blank', 'noopener');
+/* Membuka WhatsApp dengan nomor tujuan dan pesan yang sudah terisi. */
+function bukaWhatsapp(nomor, pesan) {
+	const cleanPhone = normalisasiNomorWa(nomor);
+	if (!cleanPhone) {
+		tampilkanToast('Nomor WhatsApp penyedia belum tersedia.');
+		return;
+	}
+	const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(pesan)}`;
+	window.open(url, '_blank', 'noopener');
 }
 
 /* Mengisi <select> dengan pilihan skill */
@@ -46,7 +51,7 @@ function siapkanFormWhatsapp(penyedia) {
 		perbaruiMintaTolong();
 	});
 	dialogMinta.addEventListener('input', perbaruiMintaTolong);
-	$('#mt-kirim').addEventListener('click', () => bukaWhatsapp(susunPesanMintaTolong()));
+	$('#mt-kirim').addEventListener('click', () => bukaWhatsapp(penyedia.whatsapp, susunPesanMintaTolong()));
 
 	/* ---------- Tukar Skill ---------- */
 	isiPilihanSkill($('#tk-pelajari'), penyedia.skill);
@@ -74,7 +79,7 @@ function siapkanFormWhatsapp(penyedia) {
 		perbaruiTukarSkill();
 	});
 	dialogTukar.addEventListener('input', perbaruiTukarSkill);
-	$('#tk-kirim').addEventListener('click', () => bukaWhatsapp(susunPesanTukarSkill()));
+	$('#tk-kirim').addEventListener('click', () => bukaWhatsapp(penyedia.whatsapp, susunPesanTukarSkill()));
 }
 
 /* ---------- Umum ---------- */

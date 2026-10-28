@@ -102,7 +102,24 @@
 
 	<!-- TEMPLATE kartu penyedia. Bagian bertanda data-isi diisi oleh JavaScript. -->
 	<template id="tpl-kartu">
-		<article class="pc">
+		<article class="pc" style="position: relative;">
+			<span data-isi="badge-saya" style="
+				position: absolute;
+				top: 14px;
+				right: 14px;
+				z-index: 10;
+				background: rgba(255, 143, 46, 0.15);
+				border: 1px solid rgba(255, 143, 46, 0.45);
+				color: #FF8F2E;
+				font-size: 0.72rem;
+				font-weight: 700;
+				padding: 3px 10px;
+				border-radius: 999px;
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+				letter-spacing: 0.02em;
+				pointer-events: none;
+			" hidden>Profil Kamu</span>
+
 			<div class="ph">
 				<div class="av" data-isi="avatar"></div>
 				<div>
@@ -119,7 +136,6 @@
 								data-isi="jumlah-ulasan"></span> ulasan)</span></div>
 				</div>
 				<span class="sw" data-isi="badge-tukar">Bisa tukar skill</span>
-				<span class="sw" data-isi="badge-saya" style="border-color: rgba(45, 183, 173, 0.4); background: rgba(45, 183, 173, 0.1); color: var(--teal);" hidden>Profil Kamu</span>
 			</div>
 			<a class="btn tl" data-isi="link-profil">Lihat profil</a>
 		</article>

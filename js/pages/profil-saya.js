@@ -382,7 +382,26 @@ function tampilkanFotoDanGaleri() {
 		const kotakGambar = $('[data-slot="' + slot + '"][data-aksi="isi"]');
 		tombolTambah.hidden = !!gambar;
 		kotakGambar.hidden = !gambar;
-		if (gambar) $('img', kotakGambar).src = gambar;
+		if (gambar) {
+			const imgEl = $('img', kotakGambar);
+			imgEl.src = gambar;
+			imgEl.style.cursor = 'zoom-in';
+			imgEl.style.transition = 'transform 0.2s ease';
+			kotakGambar.style.cursor = 'zoom-in';
+			kotakGambar.style.transition = 'transform 0.2s ease';
+
+			// Event klik untuk membuka lightbox pratinjau (kecualikan jika klik tombol hapus '.x')
+			kotakGambar.onclick = (e) => {
+				if (e.target.closest('.x') || e.target.dataset.aksi === 'hapus') return;
+				bukaLightbox(gambar, `Portofolio Karya ${slot + 1}`);
+			};
+			kotakGambar.onmouseenter = () => {
+				kotakGambar.style.transform = 'scale(1.02)';
+			};
+			kotakGambar.onmouseleave = () => {
+				kotakGambar.style.transform = 'scale(1)';
+			};
+		}
 	});
 }
 

@@ -230,7 +230,22 @@ function renderProfil(penyedia, isProfilSendiri = false) {
 				const item = document.createElement('div');
 				item.style.overflow = 'hidden';
 				item.style.padding = '0';
-				item.innerHTML = `<img src="${urlGambar}" alt="Portofolio ${index + 1}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">`;
+				item.style.cursor = 'zoom-in';
+				item.style.transition = 'transform 0.2s ease, border-color 0.2s ease';
+				item.className = 'port-item-zoom';
+				item.innerHTML = `<img src="${urlGambar}" alt="Portofolio ${index + 1}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;transition:transform 0.2s ease;">`;
+
+				item.addEventListener('mouseenter', () => {
+					item.style.transform = 'scale(1.02)';
+				});
+				item.addEventListener('mouseleave', () => {
+					item.style.transform = 'scale(1)';
+				});
+
+				item.addEventListener('click', () => {
+					bukaLightbox(urlGambar, `Portofolio ${penyedia.nama} (${index + 1})`);
+				});
+
 				wadahPorto.appendChild(item);
 			});
 		}

@@ -94,10 +94,11 @@ function buatKartu(p) {
 	isiTeks(kartu, 'jumlah-ulasan', p.jumlahUlasan);
 	$('[data-isi="badge-tukar"]', kartu).hidden = !p.bukaTukarSkill;
 
-	// Badge penanda jika kartu adalah profil milik pengguna yang sedang login
+	// Badge penanda independen jika kartu adalah profil milik pengguna yang sedang login
+	const isOwner = Boolean(currentUserId && String(currentUserId) === String(p.id));
 	const badgeSaya = $('[data-isi="badge-saya"]', kartu);
 	if (badgeSaya) {
-		badgeSaya.hidden = !(currentUserId && String(currentUserId) === String(p.id));
+		badgeSaya.hidden = !isOwner;
 	}
 
 	$('[data-isi="link-profil"]', kartu).href = 'profil.html?id=' + encodeURIComponent(p.id) + '&from=katalog';

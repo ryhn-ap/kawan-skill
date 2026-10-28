@@ -1,5 +1,33 @@
 /* HALAMAN DAFTAR (daftar.html): Pendaftaran akun dengan Supabase Auth + pembuatan baris profil */
 
+/* Toggle Lihat/Sembunyikan Kata Sandi */
+function inisialisasiToggleSandi() {
+	$$('.btn-toggle-pw').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			const targetId = btn.dataset.target;
+			const input = $('#' + targetId);
+			if (!input) return;
+
+			const iconEye = $('.icon-eye', btn);
+			const iconEyeOff = $('.icon-eye-off', btn);
+
+			if (input.type === 'password') {
+				input.type = 'text';
+				if (iconEye) iconEye.style.display = 'none';
+				if (iconEyeOff) iconEyeOff.style.display = 'block';
+				btn.setAttribute('aria-label', 'Sembunyikan kata sandi');
+			} else {
+				input.type = 'password';
+				if (iconEye) iconEye.style.display = 'block';
+				if (iconEyeOff) iconEyeOff.style.display = 'none';
+				btn.setAttribute('aria-label', 'Lihat kata sandi');
+			}
+		});
+	});
+}
+
+inisialisasiToggleSandi();
+
 const formDaftar = $('#form-daftar');
 const btnSubmit = $('button[type="submit"]', formDaftar);
 

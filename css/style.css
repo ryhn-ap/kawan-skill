@@ -1360,6 +1360,53 @@ dialog::backdrop {
 }
 
 /* ===== MOBILE RESPONSIVE NAVBAR & HAMBURGER MENU ===== */
+/* ===== INPUT PASSWORD WRAPPER & TOGGLE SHOW/HIDE ===== */
+.pw-wrap {
+   position: relative;
+   display: flex;
+   align-items: center;
+   width: 100%;
+}
+
+.pw-wrap input {
+   padding-right: 44px !important;
+}
+
+.btn-toggle-pw {
+   position: absolute;
+   right: 12px;
+   top: 50%;
+   transform: translateY(-50%);
+   background: none;
+   border: none;
+   padding: 4px;
+   cursor: pointer;
+   color: #94a3b8;
+   line-height: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: color 0.15s;
+}
+
+.btn-toggle-pw:hover {
+   color: #e2e8f0;
+}
+
+.link-lupa-pw {
+   color: var(--mu);
+   font-size: 0.84rem;
+   text-decoration: none;
+   margin-top: 4px;
+   display: inline-block;
+   transition: color 0.15s;
+}
+
+.link-lupa-pw:hover {
+   color: var(--teal);
+}
+
+
 .btn-hamburger {
    display: none;
    background: transparent;

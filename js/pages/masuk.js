@@ -1,5 +1,29 @@
 /* HALAMAN MASUK (masuk.html): Login dengan Supabase Auth */
 
+// Cek konfirmasi email dari redirect Supabase (?confirmed=true atau hash token)
+function periksaKonfirmasiEmail() {
+	const params = new URLSearchParams(window.location.search);
+	const isConfirmedParam = params.get('confirmed') === 'true';
+	const hasAccessTokenHash = window.location.hash.includes('access_token');
+	const isTypeSignupHash = window.location.hash.includes('type=signup');
+
+	if (isConfirmedParam || hasAccessTokenHash || isTypeSignupHash) {
+		const toast = $('#toast');
+		if (toast) {
+			toast.style.borderColor = '#2DB7AD';
+			toast.style.color = '#2DB7AD';
+		}
+		tampilkanToast('Email berhasil diverifikasi! Silakan masuk ke akunmu.', 4500);
+
+		// Bersihkan hash dari URL agar terlihat rapi tanpa reload
+		if (window.location.hash) {
+			history.replaceState(null, '', window.location.pathname + window.location.search);
+		}
+	}
+}
+
+periksaKonfirmasiEmail();
+
 const formMasuk = $('#form-masuk');
 const btnSubmit = $('button[type="submit"]', formMasuk);
 

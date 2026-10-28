@@ -21,10 +21,13 @@ formDaftar.addEventListener('submit', async (e) => {
 
 	try {
 		if (window.supabase) {
+			const redirectTo = `${window.location.origin}/masuk.html?confirmed=true`;
+
 			const { data, error } = await window.supabase.auth.signUp({
 				email: email,
 				password: sandi,
 				options: {
+					emailRedirectTo: redirectTo,
 					data: { name: nama }
 				}
 			});
@@ -52,8 +55,8 @@ formDaftar.addEventListener('submit', async (e) => {
 				if (!data.session) {
 					btnSubmit.disabled = false;
 					btnSubmit.textContent = teksAsli;
-					tampilkanToast('Pendaftaran berhasil! Cek email untuk konfirmasi akun.');
-					setTimeout(() => { location.href = 'masuk.html'; }, 2000);
+					tampilkanToast('Pendaftaran berhasil! Silakan cek kotak masuk atau folder spam email kamu untuk verifikasi akun sebelum masuk.', 5000);
+					setTimeout(() => { location.href = 'masuk.html'; }, 4000);
 					return;
 				}
 

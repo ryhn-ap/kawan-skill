@@ -29,10 +29,11 @@ function isiTeks(akar, nama, teks) {
 }
 
 /* Pesan kecil di bawah layar (elemen <div id="toast"> ada di setiap halaman) */
-function tampilkanToast(pesan) {
+function tampilkanToast(pesan, durasi = 2200) {
 	const toast = $('#toast');
+	if (!toast) return;
 	toast.textContent = pesan;
 	toast.classList.add('on');
 	clearTimeout(tampilkanToast.timer);
-	tampilkanToast.timer = setTimeout(() => toast.classList.remove('on'), 2200);
+	tampilkanToast.timer = setTimeout(() => toast.classList.remove('on'), durasi);
 }

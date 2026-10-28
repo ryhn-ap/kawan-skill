@@ -127,6 +127,30 @@ async function muatDataDariSupabase() {
 			dataSaya.skill = [{ nama: '', tarif: 0 }];
 		}
 
+		// 3. Ambil data link ulasan live dari Supabase tabel reviews
+		const { data: reviewsData, error: errReviews } = await window.supabase
+			.from('reviews')
+			.select('id, token_ulasan, is_used, tipe_pengulas, komentar, created_at')
+			.eq('profile_id', idPenggunaAktif)
+			.not('token_ulasan', 'is', null)
+			.order('created_at', { ascending: false });
+
+		if (errReviews) {
+			console.error('Error load reviews Supabase:', errReviews.message);
+		} else if (reviewsData) {
+			dataSaya.linkUlasan = reviewsData.map((r) => {
+				const isUsed = Boolean(r.is_used === true || r.is_used === 'TRUE' || (r.komentar && r.komentar.trim() !== ''));
+				const jenis = r.tipe_pengulas === 'Pengguna Terdaftar' ? 'tukar-skill' : 'minta-tolong';
+				return {
+					id: r.id,
+					kode: r.token_ulasan,
+					jenis: jenis,
+					terpakai: isUsed,
+					komentar: r.komentar
+				};
+			});
+		}
+
 		simpan();
 	} catch (err) {
 		console.error('Gagal sinkronisasi data dari Supabase:', err);
@@ -438,17 +462,56 @@ function tampilkanDaftarLink() {
 		const url = window.location.origin + window.location.pathname.replace('profil-saya.html', 'ulasan.html') + '?token=' + link.kode;
 		isiTeks(baris, 'url', url);
 		isiTeks(baris, 'jenis', link.jenis === 'tukar-skill' ? 'Untuk Tukar Skill (pengulas wajib login)' : 'Untuk Minta Tolong');
-		const status = isiTeks(baris, 'status', link.terpakai ? 'Sudah dipakai' : 'Belum dipakai');
+		
+		const isUsed = Boolean(link.terpakai === true || link.is_used === true || link.is_used === 'TRUE' || (link.komentar && link.komentar.trim() !== ''));
+		const status = $('[data-isi="status"]', baris);
 		const tombolBuka = $('[data-isi="buka"]', baris);
 		const tombolSalin = $('[data-isi="salin"]', baris);
 
-		if (link.terpakai) {
-			status.classList.add('terpakai');
-			tombolBuka.hidden = true;
-			tombolSalin.hidden = true;
+		if (isUsed) {
+			status.textContent = 'Sudah dipakai';
+			status.className = 'st terpakai';
+			status.style.background = 'rgba(51, 65, 85, 0.5)';
+			status.style.color = '#94a3b8';
+			status.style.borderColor = 'rgba(71, 85, 105, 0.4)';
+
+			// Sembunyikan atau nonaktifkan tombol Buka dan Salin
+			if (tombolBuka) {
+				tombolBuka.removeAttribute('href');
+				tombolBuka.style.opacity = '0.5';
+				tombolBuka.style.cursor = 'not-allowed';
+				tombolBuka.style.pointerEvents = 'none';
+				tombolBuka.hidden = true;
+			}
+			if (tombolSalin) {
+				tombolSalin.disabled = true;
+				tombolSalin.style.opacity = '0.5';
+				tombolSalin.style.cursor = 'not-allowed';
+				tombolSalin.style.pointerEvents = 'none';
+				tombolSalin.hidden = true;
+			}
 		} else {
-			tombolBuka.href = 'ulasan.html?token=' + link.kode;
-			tombolSalin.addEventListener('click', () => salinLink(url));
+			status.textContent = 'Belum dipakai';
+			status.className = 'st';
+			status.style.background = '';
+			status.style.color = '';
+			status.style.borderColor = '';
+
+			if (tombolBuka) {
+				tombolBuka.hidden = false;
+				tombolBuka.href = 'ulasan.html?token=' + link.kode;
+				tombolBuka.style.opacity = '';
+				tombolBuka.style.cursor = '';
+				tombolBuka.style.pointerEvents = '';
+			}
+			if (tombolSalin) {
+				tombolSalin.hidden = false;
+				tombolSalin.disabled = false;
+				tombolSalin.style.opacity = '';
+				tombolSalin.style.cursor = '';
+				tombolSalin.style.pointerEvents = '';
+				tombolSalin.addEventListener('click', () => salinLink(url));
+			}
 		}
 		wadah.appendChild(baris);
 	});

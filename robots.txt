@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ryhn-ap.github.io/kawan-skill/sitemap.xml
